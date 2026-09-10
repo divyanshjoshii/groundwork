@@ -109,9 +109,13 @@ npx skills add mattpocock/skills -g
 
 Worth understanding, because most setups get it wrong.
 
-A rule in `CLAUDE.md` is read every session and followed, but it can slip in a long one. A hook physically blocks the command and cannot be talked around.
+A rule in `CLAUDE.md` is read every session and followed, but it can slip in a long one. A real block stops the action before it happens and cannot be talked around.
 
-*Prefer small functions* is soft. *Never push without asking* is hard, and belongs in a hook. Groundwork offers to set that up when you name something as non-negotiable, and never wires a hook without you saying yes.
+*Prefer small functions* is soft. *Never push without asking* is hard.
+
+Hard rules get routed by what they actually are. Git operations go to a hook. Everything else, like deleting files or reading a secret, goes to deny rules in `.claude/settings.json`, which block the tool call with no hook script involved. Most hard rules people name turn out to be the second kind, and a git hook does nothing for those.
+
+Groundwork offers whichever fits when you name something non-negotiable, and writes neither without you saying yes.
 
 ## Requirements
 

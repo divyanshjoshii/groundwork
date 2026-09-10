@@ -120,6 +120,14 @@ docs/handoffs/.gitkeep
 
 If `CLAUDE.md` already exists, show a diff and get approval before replacing it. Never silently overwrite.
 
+**Read it first and look for two things that must survive.**
+
+An `@path` line is an import. `@AGENTS.md` on its own means the real rules live in that other file, so replacing `CLAUDE.md` wholesale breaks the link. Keep every import line where it is, at the top, and add below it.
+
+A `<!-- BEGIN:something -->` / `<!-- END:something -->` pair marks a block some tool regenerates. Anything written between those markers gets wiped the next time that tool runs. Never write inside one, and never assume a file carrying such a block is safe to rewrite. Add outside the markers or in a different file, and say which you chose.
+
+Check the imported file for markers too. A one-line `CLAUDE.md` pointing at an `AGENTS.md` full of managed blocks looks like an empty project and is not one.
+
 ### Step 4b — Humanize what people read
 
 **Invoke the `humanizer` skill with the Skill tool. Actually call it.**
@@ -138,9 +146,35 @@ The goal is prose that reads like the user wrote it. Do not claim, in the files 
 
 Only if the user named a **hard** rule in round 3.
 
-Explain the difference plainly: a rule in `CLAUDE.md` is followed but can be missed under a long session; a hook physically blocks the command. Then offer to invoke `git-guardrails-claude-code` for the destructive git operations they named.
+Explain the difference plainly: a rule in `CLAUDE.md` is followed but can be missed under a long session, while a real block stops the action before it happens.
 
-Offer it. Do not wire hooks without an explicit yes.
+**Route each hard rule by what it actually is.** Most hard rules people name are not git operations, and offering a git hook for them does nothing:
+
+| The rule is about | Use |
+|---|---|
+| `git push`, `reset --hard`, `clean`, `branch -D` | the `git-guardrails-claude-code` skill |
+| Deleting files, reading a secret, running a particular command, touching a path | **deny rules** in `.claude/settings.json` |
+
+Deny rules block a tool call before it runs and need no hook script:
+
+```json
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env.local)",
+      "Edit(./.env.local)",
+      "Write(./.env.local)",
+      "Bash(rm:*)"
+    ]
+  }
+}
+```
+
+Read any existing `.claude/settings.json` and merge into it. Never overwrite one.
+
+Two things to tell the user. `.claude/` is gitignored in many projects, so deny rules usually stay on their machine rather than travelling with the repository. And a broad pattern like `Bash(rm:*)` blocks every use of that command, including ones they might want later.
+
+Offer. Do not wire a hook or write a deny rule without an explicit yes.
 
 ### Step 6 — Report
 
