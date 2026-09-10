@@ -55,7 +55,7 @@ It also asks what you *dislike*. That turns out to be sharper than what you like
 
 Hackathon rules, a client brief, a course assignment, a problem statement. Paste a link, a repo, a PDF or a Word file and it does the reading.
 
-It pulls out deliverables, mandated technology, disqualifying constraints, judging criteria, deadlines and submission format — then reads the extraction back before believing any of it, because briefs are often vague and a misread constraint poisons every file downstream.
+It pulls out deliverables, mandated technology, disqualifying constraints, judging criteria, deadlines and submission format, then reads the extraction back before believing any of it. Briefs are often vague, and a misread constraint poisons every file downstream.
 
 Mandated rules land in `CLAUDE.md` under their own non-negotiable heading. Your preferences can be traded off for a better engineering call. These can't.
 
@@ -81,7 +81,7 @@ npx skills add divyanshjoshii/groundwork -g
 
 ## Companion skills
 
-**Groundwork works with none of these installed.** The interview and the files are self-contained. Each one below adds a step, and anything missing is skipped quietly — it will never interrupt an interview to suggest an install.
+**Groundwork works with none of these installed.** The interview and the files are self-contained. Each one below adds a step, and anything missing is skipped quietly. It will never interrupt an interview to suggest an install.
 
 | Skill | Adds | Install |
 |---|---|---|
@@ -97,13 +97,13 @@ The middle four all live in one collection:
 npx skills add mattpocock/skills -g
 ```
 
-**Be aware that installs around 37 skills, not four.** Claude Code gives the skill list a limited slice of context and silently drops descriptions when it overflows, so a large collection can quietly stop other skills from firing. Install it if you want the whole set. Otherwise skip these four — groundwork works without them.
+**Be aware that this installs around 37 skills, not four.** Claude Code gives the skill list a limited slice of context and silently drops descriptions when it overflows, so a large collection can stop other skills from firing without telling you. Install it if you want the whole set. Otherwise skip these four, since groundwork works without them.
 
 `pdf` and `docx` are needed only for briefs in those formats. Both are first-party Anthropic skills you enable in your claude.ai settings rather than installing here.
 
 ## Pairs well with
 
-[ship](https://github.com/divyanshjoshii/ship) — commit and push with every step confirmed. Groundwork writes the rules; ship checks your work against them before it reaches GitHub.
+[ship](https://github.com/divyanshjoshii/ship) handles commit and push with every step confirmed. Groundwork writes the rules, and ship checks your work against them before it reaches GitHub.
 
 ## Hard rules and soft rules
 
