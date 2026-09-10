@@ -15,11 +15,14 @@ If you arrived here automatically rather than by the user typing `/groundwork`, 
 | Argument | Mode | When |
 |---|---|---|
 | none, no `CLAUDE.md` present | **setup** | First time in a project |
-| none, `CLAUDE.md` present | **review** | Check the notes against reality |
+| none, `CLAUDE.md` **and** `docs/` present | **review** | Check the notes against reality |
+| none, `CLAUDE.md` present but no `docs/` | **setup** | Someone else's `CLAUDE.md`; see below |
 | `sync` | **sync** | Update progress and change log after work |
 | `rules` | **rules** | Revisit only the rules |
 | `brief` | **brief** | Add or re-read an external brief later |
 | `review` | **review** | Force a drift check |
+
+A `CLAUDE.md` with no `docs/` beside it was written by something other than groundwork: the user by hand, another tool, or a template. Run setup, but say what you found first and show a diff before touching that file. Review mode on notes that do not exist reports every single one as drift, which is noise rather than information.
 
 ---
 
@@ -31,11 +34,14 @@ Never ask the user something the repository already answers. Run:
 
 ```bash
 ls -A; git log --oneline -20 2>/dev/null; git remote -v 2>/dev/null
+git ls-files 2>/dev/null | grep -cE '\.(ts|tsx|js|jsx|py|go|rs|java|kt|rb|php|cs|c|h|cpp|swift)$'
 ```
 
 Read whichever exist: `package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`, `requirements.txt`, `README.md`, `CLAUDE.md`, `AGENTS.md`, and the top two levels of the tree.
 
-If the directory is empty or has no source code, this is a **new project**: there is nothing to infer, so the interview carries more of the load.
+**That count decides which kind of setup this is.** Zero means a new project: nothing to infer, so the interview carries the whole load and round 2 has to establish the stack from scratch. Above zero means there is code to read, so round 2 confirms rather than asks, and round 4 infers conventions from the code before asking about them.
+
+Do not judge this by eye. An empty-looking folder can hold a `src/` two levels down, and a folder full of markdown can look like a project while offering nothing to infer from.
 
 ### Step 2 — Ask for an external brief
 
@@ -85,7 +91,7 @@ Rounds, in order:
 1. **Identity** — What is this? Who uses it? What does done look like for the first milestone?
 2. **Stack and shape** — Confirm what you inferred or read from the brief. For a new project with no brief, offer a recommendation with reasons rather than an open question.
 3. **Rules** — *The important round; never skip it.* Ask what needs their permission. Prompt with concrete candidates: pushing, opening PRs, installing dependencies, deleting files, database migrations, touching secrets or CI, force-pushing, changing public APIs. For each, establish whether it is **hard** (must be impossible) or **soft** (should be respected). Also settle the two commit questions from *What to commit* below: does `docs/brief.md` go in the repository, and do handoffs.
-4. **Standards** — Four parts, in this order:
+4. **Standards** — Five parts, in this order. Do not stop early:
    - **Code.** How they like it written. Infer from existing code first and confirm. Ask what they dislike, not only what they like — it discriminates better.
    - **Prose.** The voice for READMEs, commit messages, PR descriptions and docs, and any words or tone to avoid.
    - **Formatter.** Run the check in *Formatting and linting* below.
@@ -116,7 +122,13 @@ If `CLAUDE.md` already exists, show a diff and get approval before replacing it.
 
 ### Step 4b — Humanize what people read
 
-Invoke the `humanizer` skill over every file a person will actually read: `docs/overview.md`, the prose in `docs/architecture.md` and `docs/brief.md`, and any README you generated. Apply the voice recorded in `docs/standards.md`.
+**Invoke the `humanizer` skill with the Skill tool. Actually call it.**
+
+Writing carefully by hand and describing the result as humanized is the failure this step exists to prevent, and it is easy to do without noticing. A hand-written pass reliably leaves dashes used as connectors, a closing line that repeats the sentence before it, and passive openers. Those are exactly what the skill looks for.
+
+**Do not report that the humanizer ran unless you invoked it.**
+
+Run it over every file a person will actually read: `docs/overview.md`, the prose in `docs/architecture.md` and `docs/brief.md`, and any README you generated. Apply the voice recorded in `docs/standards.md`.
 
 Leave `CLAUDE.md` and `docs/standards.md` as they are. Their job is to be scanned and obeyed, and a terse list of rules is what a human-written rules file looks like anyway. Flowing prose there would damage the file and gain nothing.
 
@@ -222,13 +234,21 @@ Unlike the formatter, these install once for the whole machine and then help on 
 
 Without one, code is found by searching text. With one, a definition can be resolved and real callers found before anything is changed. The practical result is fewer wrong edits.
 
-Check whether the binary for the round 2 language is on PATH:
+Check the **one** binary for the round 2 language, never a list. `command -v` with several names exits 0 when *any* of them is found, so a list reports success while the language the user actually needs is missing.
 
 ```bash
-command -v typescript-language-server pyright gopls rust-analyzer 2>/dev/null
+command -v pyright >/dev/null 2>&1 && echo present || echo absent
 ```
 
-If it is missing, give **both** steps. The plugin wraps a binary it does not install, so one without the other does nothing.
+**A `command -v` miss does not prove absence.** On Windows, `pip install --user` puts binaries in a scripts directory that is usually not on PATH. Before telling the user to install anything, check there too:
+
+```bash
+ls "$(python -c 'import sysconfig; print(sysconfig.get_path("scripts","nt_user"))' 2>/dev/null)" 2>/dev/null | grep -i pyright
+```
+
+Tell the user it is installed but unreachable when it turns up there, and give them the directory to add to PATH. Telling someone to install software they already have is worse than staying quiet.
+
+If it is genuinely missing, give **both** steps. The plugin wraps a binary it does not install, so one without the other does nothing.
 
 | Language | Binary | Plugin |
 |---|---|---|
@@ -245,11 +265,21 @@ Finish with `/reload-plugins`.
 
 Fetches current library documentation on demand, so API advice is not capped by a training cutoff. Worth raising once on any project with third-party dependencies.
 
+**Check the CLI exists before offering the command.** A desktop-only install often has no `claude` on PATH, and handing the user a command that cannot run wastes their time:
+
+```bash
+command -v claude >/dev/null 2>&1 && echo present || echo absent
+```
+
+When it is absent, say Context7 needs the Claude Code CLI and stop. Do not print the install command.
+
+When it is present:
+
 ```bash
 claude mcp add --scope user context7 -- npx -y @upstash/context7-mcp
 ```
 
-`--scope user` covers every project. Confirm with `claude mcp list`. This needs the `claude` CLI on PATH, which a desktop-only install may not have.
+`--scope user` covers every project. Confirm with `claude mcp list`.
 
 When it is present, record in `docs/standards.md` that Context7 is the source of truth for library APIs, so a later session looks it up instead of guessing.
 
