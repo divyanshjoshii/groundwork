@@ -12,9 +12,13 @@ Groundwork writes all of that down once, in files the agent reads on its own.
 
 ## How it runs
 
+<!-- Diagram colours: ship's neutral palette, since this repository has no stylesheet or logo. -->
+
 ```mermaid
+%%{init: {"theme":"base","themeVariables":{"background":"#FFFFFF","primaryColor":"#FFFFFF","primaryTextColor":"#0B0B0B","primaryBorderColor":"#4F46E5","lineColor":"#4F46E5","secondaryColor":"#EAE9FC","tertiaryColor":"#FFFFFF","textColor":"#0B0B0B","edgeLabelBackground":"#FFFFFF","clusterBkg":"#FFFFFF","clusterBorder":"#CECECE","titleColor":"#0B0B0B","rowOdd":"#FFFFFF","rowEven":"#F0F0F0","attributeBackgroundColorOdd":"#FFFFFF","attributeBackgroundColorEven":"#F0F0F0","actorBkg":"#FFFFFF","actorBorder":"#4F46E5","actorTextColor":"#0B0B0B","actorLineColor":"#919191","signalColor":"#4F46E5","signalTextColor":"#0B0B0B","labelBoxBkgColor":"#FFFFFF","labelBoxBorderColor":"#4F46E5","labelTextColor":"#0B0B0B","loopTextColor":"#0B0B0B","noteBkgColor":"#E5E3FB","noteTextColor":"#0B0B0B","noteBorderColor":"#4F46E5","activationBkgColor":"#4F46E5","activationBorderColor":"#4F46E5"}}}%%
+%% palette 97d170e1
 flowchart TD
-    A["/groundwork"] --> B{Any code here?}
+    A(["/groundwork"]) --> B{Any code here?}
     B -->|Yes| C[Read the repo first]
     B -->|No| D[Nothing to infer]
     C --> E{External brief?}
@@ -24,10 +28,19 @@ flowchart TD
     F --> G
     G --> H["Write CLAUDE.md + docs/"]
     H --> I[Humanize what people will read]
-    I --> J[Offer to block dangerous git commands]
+    I --> J[Offer real blocks for hard rules]
     J --> K{Existing project?}
     K -->|Yes| L["Docs makeover<br/>through /ship docs"]
-    K -->|No| M[Done]
+    K -->|No| M([Done])
+
+    classDef role1 fill:#E3E1FB,stroke:#4F46E5,color:#0B0B0B
+    classDef role2 fill:#FBE1F4,stroke:#E546BC,color:#0B0B0B
+    classDef role4 fill:#E3F4DA,stroke:#52BC1A,color:#0B0B0B
+    classDef role5 fill:#DAF4F1,stroke:#1ABCA5,color:#0B0B0B
+    class A,C,D,F,G,H,I,J role1
+    class B,E,K role2
+    class L role5
+    class M role4
 ```
 
 ## What it writes
