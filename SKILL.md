@@ -180,6 +180,15 @@ Offer. Do not wire a hook or write a deny rule without an explicit yes.
 
 Show the tree you created, read the rules back as one short list, and note anything from the brief the user still needs to clarify with whoever set it.
 
+
+### Step 7 — The makeover
+
+Only for a project that existed before this run: step 1 counted source files, or the README already had real content. On a brand new project, skip it. There is nothing to make over yet, and ordinary `/ship` adds diagrams as the code grows.
+
+Groundwork writes the notes. The `ship` skill's makeover makes the existing docs look finished: diagrams in the project's own colours, badges, a logo header, and README wording tidied by the humanizer. Say what is about to happen in one line, then invoke the `ship` skill with `docs`.
+
+Nothing gets committed without the user's yes. The makeover shows its full diff first, and ship asks again before pushing.
+
 ---
 
 ## Mode: brief
@@ -385,6 +394,7 @@ Degrade quietly. A missing skill is not a problem to raise, and never interrupt 
 | `handoff` | Note in `CLAUDE.md` that handoffs go in `docs/handoffs/`, and leave the folder |
 | `git-guardrails-claude-code` | Record hard rules in `CLAUDE.md` and say plainly that they are written down, not enforced |
 | `pdf` / `docx` | Ask the user to paste the brief's text instead |
+| `ship` | Skip step 7, and mention once that `/ship docs` exists |
 
 ## Delegate rather than reimplement
 
@@ -393,3 +403,4 @@ Degrade quietly. A missing skill is not a problem to raise, and never interrupt 
 - Blocking dangerous git commands → invoke `git-guardrails-claude-code`
 - Conventions for agent-facing markdown → invoke `writing-for-agents`
 - PDF or Word briefs → invoke `pdf` or `docx`
+- The docs makeover on an existing project → invoke `ship` with `docs`

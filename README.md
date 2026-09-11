@@ -25,6 +25,9 @@ flowchart TD
     G --> H["Write CLAUDE.md + docs/"]
     H --> I[Humanize what people will read]
     I --> J[Offer to block dangerous git commands]
+    J --> K{Existing project?}
+    K -->|Yes| L["Docs makeover<br/>through /ship docs"]
+    K -->|No| M[Done]
 ```
 
 ## What it writes
@@ -60,6 +63,12 @@ It pulls out deliverables, mandated technology, disqualifying constraints, judgi
 Mandated rules land in `CLAUDE.md` under their own non-negotiable heading. Your preferences can be traded off for a better engineering call. These can't.
 
 Requirements become a checklist. `sync` ticks items off, and `review` reports unmet mandated requirements before anything else.
+
+## Existing projects
+
+Run it on a project that already has code and a README, and the last step hands over to [ship](https://github.com/divyanshjoshii/ship) for a one-time docs makeover. The README gets diagrams drawn from the real code, in the project's own colours, plus a logo header and badges, and its prose is rewritten to sound like you. You see the diff before anything is committed.
+
+Without ship installed, groundwork mentions `/ship docs` once and stops there.
 
 ## Modes
 
