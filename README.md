@@ -19,7 +19,7 @@ Groundwork writes all of that down once, in files the agent reads on its own.
 %% palette 97d170e1
 flowchart TD
     A(["/groundwork"]) --> B{Any code here?}
-    B -->|Yes| C[Read the repo first]
+    B -->|Yes| C["Read the repo first,<br/>map it when it's large"]
     B -->|No| D[Nothing to infer]
     C --> E{External brief?}
     D --> E
@@ -30,7 +30,7 @@ flowchart TD
     H --> I[Humanize what people will read]
     I --> J[Offer real blocks for hard rules]
     J --> K{Existing project?}
-    K -->|Yes| L["Docs makeover<br/>through /ship docs"]
+    K -->|Yes| L["Offer the docs makeover<br/>through /ship docs"]
     K -->|No| M([Done])
 
     classDef role1 fill:#E3E1FB,stroke:#4F46E5,color:#0B0B0B
@@ -57,7 +57,9 @@ docs/
   handoffs/            session notes, one file per stop
 ```
 
-Only `CLAUDE.md` loads every session, which is why it stays small. It holds your rules and an index. The rest gets opened when it's relevant and costs nothing the rest of the time.
+Only `CLAUDE.md` loads every session, which is why it stays small. It holds your rules and an index. The rest gets opened when it's relevant and costs nothing the rest of the time. Your progress notes and the latest handoff get read when a session picks up earlier work; a quick question skips them.
+
+The skill keeps its own instructions small the same way: `sync`, `review` and `rules` load a short file, and the long setup instructions load only during setup.
 
 ## The interview
 
@@ -67,11 +69,13 @@ It reads your repo before asking anything, so it confirms rather than interrogat
 
 It also asks what you *dislike*. That turns out to be sharper than what you like.
 
+The rules round also settles how work reaches GitHub: a branch and pull request per change or straight to the default branch, and whether commits carry any AI attribution. [ship](https://github.com/divyanshjoshii/ship) reads the answer before every push, and leaves merging your pull requests to you.
+
 ## Working from a brief
 
 Hackathon rules, a client brief, a course assignment, a problem statement. Paste a link, a repo, a PDF or a Word file and it does the reading.
 
-It pulls out deliverables, mandated technology, disqualifying constraints, judging criteria, deadlines and submission format, then reads the extraction back before believing any of it. Briefs are often vague, and a misread constraint poisons every file downstream.
+It pulls out deliverables, mandated technology, disqualifying constraints, the rules on AI use, judging criteria, deadlines and submission format, then reads the extraction back before believing any of it. If the brief says AI help must be disclosed, that becomes a non-negotiable rule, and ship writes the disclosure into your pull requests. Briefs are often vague, and a misread constraint poisons every file downstream.
 
 Mandated rules land in `CLAUDE.md` under their own non-negotiable heading. Your preferences can be traded off for a better engineering call. These can't.
 
@@ -79,7 +83,9 @@ Requirements become a checklist. `sync` ticks items off, and `review` reports un
 
 ## Existing projects
 
-Run it on a project that already has code and a README, and the last step hands over to [ship](https://github.com/divyanshjoshii/ship) for a one-time docs makeover. The README gets diagrams drawn from the real code, in the project's own colours, plus a logo header and badges, and its prose is rewritten to sound like you. You see the diff before anything is committed.
+On a project with around 100 source files or more, groundwork maps the code before the interview with [Graphify](https://github.com/Graphify-Labs/graphify). The map is built locally from the code alone, with no API key and no model calls. It shows the most connected pieces, the surprising links between files, and how the code clusters, so the architecture notes start from what's there. The full map stays in `graphify-out/`, which gets gitignored, and `review` refreshes it to check the notes haven't drifted.
+
+The last step offers a one-time docs makeover through [ship](https://github.com/divyanshjoshii/ship). The README gets diagrams drawn from the real code, in the project's own colours, plus a logo header and badges, and its prose is rewritten to sound like you. Run it in a fresh session: it reads every doc, and after a long interview each read costs more. You see the diff before anything is committed.
 
 Without ship installed, groundwork mentions `/ship docs` once and stops there.
 
@@ -122,6 +128,18 @@ npx skills add mattpocock/skills -g
 **Be aware that this installs around 37 skills, not four.** Claude Code gives the skill list a limited slice of context and silently drops descriptions when it overflows, so a large collection can stop other skills from firing without telling you. Install it if you want the whole set. Otherwise skip these four, since groundwork works without them.
 
 `pdf` and `docx` are needed only for briefs in those formats. Both are first-party Anthropic skills you enable in your claude.ai settings rather than installing here.
+
+## Tools it offers once
+
+During the standards round, groundwork checks for a few machine-wide tools and mentions only the missing ones. Say no and it won't ask again.
+
+| Tool | Why |
+|---|---|
+| A language server | Finds real callers before code changes, so fewer wrong edits |
+| Context7 | Current library docs instead of whatever the model remembers |
+| [GitHub CLI](https://cli.github.com) | Pull requests and the inbox in ship |
+| [RTK](https://github.com/rtk-ai/rtk) | Shorter command output, so long sessions keep more room for the work |
+| [Graphify](https://github.com/Graphify-Labs/graphify) | The code map for large existing projects |
 
 ## Pairs well with
 
