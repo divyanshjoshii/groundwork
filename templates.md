@@ -46,22 +46,25 @@ Read these when relevant — not every session.
 | `docs/overview.md` | you need to know what this project is for |
 | `docs/architecture.md` | before structural or dependency changes |
 | `docs/standards.md` | before writing or reviewing code |
-| `docs/progress.md` | starting a work session |
+| `docs/progress.md` | resuming work or starting a multi-step task |
 | `docs/changes.md` | you need the history behind a decision |
+| `graphify-out/GRAPH_REPORT.md` | exploring unfamiliar code (only when the map exists) |
+
+<Keep the graphify-out row only when setup ran map.mjs.>
 
 ## Writing
 
-Anything written here that a person will read — README, docs, code comments,
-commit messages, PR descriptions — goes through the `humanizer` skill before it
-lands. Voice is defined in `docs/standards.md`.
+README, docs and pull request descriptions go through the `humanizer` skill
+before they land. Commit messages follow the short check in the `ship` skill.
+Voice is defined in `docs/standards.md`.
 
 Rules files and config stay terse. They are reference, not prose.
 
 ## Sessions
 
-- At session start, read `docs/progress.md` and the newest file in `docs/handoffs/`.
+- Read `docs/progress.md` when resuming work or starting a multi-step task, and the newest file in `docs/handoffs/` only when continuing the previous session's task.
 - Handoffs go in `docs/handoffs/`, named `YYYY-MM-DD-HHMM-topic.md`. Never overwrite an existing one.
-- When a task completes, update `docs/progress.md` and append to `docs/changes.md`.
+- Progress and the change log are updated when work is committed through `ship`, or with `/groundwork sync`.
 ```
 
 ---
@@ -90,6 +93,11 @@ Only when there is an external brief. This is the **authority** on what was aske
 ## Hard constraints
 
 - <Rule that disqualifies if broken>
+
+## AI use
+
+- Allowed: <yes | no | with limits: which>
+- Disclosure: <not required | required, in the words the brief asks for>
 
 ## Judging criteria
 
@@ -200,7 +208,13 @@ recalled API shapes — they go stale.
 
 ## Commits and branches
 
-<Format, branch naming, whether commits need approval.>
+`ship` reads this section.
+
+- Flow: <branch + pull request | direct to the default branch>
+- Branch names: `<type>/<short-name>`, with type one of feat, fix, docs, chore, refactor
+- Merging: the user merges pull requests on GitHub; <Squash and merge | other method and why>
+- Commits: <every commit shown and approved first | other>
+- AI attribution: none in commits or pull requests<, except the disclosure in `docs/brief.md`>
 
 ## Prose
 
